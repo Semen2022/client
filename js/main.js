@@ -1,6 +1,8 @@
 'use strict'
 
-const responseFetch = fetch('http://f0769682.xsph.ru/', {
+const objRespOfServer = {};
+
+fetch('http://f0769682.xsph.ru/', {
     method: 'POST',
     // Добавляем необходимые заголовки
     headers: {
@@ -18,31 +20,65 @@ const responseFetch = fetch('http://f0769682.xsph.ru/', {
     return response.json();
   })
   .then((respData) => {
-    //const respDataParse = JSON.parse(respData);
-    console.log(respData);
-    localStorage.films = respData.films;
-    localStorage.halls = respData.halls;
-    localStorage.seances = respData.seances;
-    
-    console.log('В локальном хранилище - фильмы: ', localStorage.films);
-    console.log('В локальном хранилище - залы: ', localStorage.halls);
-    console.log('В локальном хранилище - сеансы: ', localStorage.seances);
+     // Для контроля полученных значений, можно удалить.
+     /*
+    console.log('Возвращаем всё', respData);
+    console.log('Возвращаем - фильмы ', respData.films.result);
+    console.log('Возвращаем - залы ', respData.halls.result);
+    console.log('Возвращаем - сеансы ', respData.seances.result);
+  */
+    objRespOfServer.arrFilms = respData.films.result;
+    objRespOfServer.arrHals = respData.halls.result;
+    objRespOfServer.arrSeances = respData.seances.result;
+
+    // получаем актуальную дату
+    const nowDate = new Date();
+/*
+  надо поработать с датой
+*/
+
+    //        Работаем со страницей. 
+//              Заполняем-создаем карточку фильма
+
+const img = Array.from(document.getElementsByTagName('img'));
+img.forEach((item, idx) => {
+  item.setAttribute('alt', objRespOfServer.arrFilms[idx].film_name + ' постер');
+  item.setAttribute('src', objRespOfServer.arrFilms[idx].film_poster);
+});
+
+const h2Title = Array.from(document.getElementsByClassName('movie__title'));
+h2Title.forEach((item, idx) => {
+  item.textContent = objRespOfServer.arrFilms[idx].film_name;
+});
+
+const pDescription = Array.from(document.getElementsByClassName('movie__synopsis'));
+pDescription.forEach((item, idx) => {
+  item.textContent = objRespOfServer.arrFilms[idx].film_description;
+});
+
+const spanDuration = Array.from(document.getElementsByClassName('movie__data-duration'));
+spanDuration.forEach((item, idx) => {
+  item.textContent = objRespOfServer.arrFilms[idx].film_duration;
+});
+
+const spanOrgin = Array.from(document.getElementsByClassName('movie__data-origin'));
+spanOrgin.forEach((item, idx) => {
+  item.textContent = objRespOfServer.arrFilms[idx].film_origin
+  ;
+});
+
+
+
+
+
   })
   // Теперь попадём сюда, т.к выбросили ошибку
   .catch((err) => {
     console.log(err);
   }); // Error: Error occurred!
-  
 
-  /*
-  const responseFetchGet = fetch('http://f0769682.xsph.ru/')
-  .then((response) => response.json());
+  console.log('objRespOfServer = ', objRespOfServer);
 
-  console.log(responseFetchGet);
-*/
-//const filmsObj =  JSON.parse(responseFetch);
 
-console.log('Ответ fetch: ', responseFetch);
-console.log('Films: ', responseFetch.films);
-console.log('Halls: ', responseFetch.halls);
-console.log('Seances: ', responseFetch.seances);
+
+
