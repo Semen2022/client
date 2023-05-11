@@ -1,8 +1,8 @@
 'use strict'
 
 const objRespOfServer = {};
-
-fetch('http://f0769682.xsph.ru/', {
+              // предыдущая ссылка http://f0769682.xsph.ru/   https://jscp-diplom.tw1.ru/
+fetch('https://jscp-diplom.tw1.ru/', {
     method: 'POST',
     // Добавляем необходимые заголовки
     headers: {
@@ -28,9 +28,13 @@ fetch('http://f0769682.xsph.ru/', {
   const tempArrHalls = respData.halls.result;
   for (const item of tempArrHalls){
     if (item.hall_open !=="0") {
-      objRespOfServer.arrHalls.push(item);
+      arrHalls.push(item);
     }
   }
+
+  console.log('arrFilms: ', arrFilms)
+  console.log('arrSeances: ', arrSeances)
+  console.log('arrHalls: ', arrHalls)
 
   // получаем актуальную дату
     const nowDate = new Date();
