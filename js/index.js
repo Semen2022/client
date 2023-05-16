@@ -1,5 +1,4 @@
 'use strict'
-alert('Привет СерёГа!!!');
 // Восстанавливаем данные из localStorage
 //console.log('arrFilms --- ', arrFilms)
 //console.log('arrHalls --- ', arrHalls)
@@ -7,11 +6,6 @@ alert('Привет СерёГа!!!');
 const arrFilms = JSON.parse(localStorage.films); 
 const arrHalls = JSON.parse(localStorage.halls); 
 const arrSeances = JSON.parse(localStorage.seances); 
-
-console.log('arrFilmsLS --- ', arrFilms)
-console.log('arrHallsLS --- ', arrHalls)
-console.log('arrSeancesLS --- ', arrSeances)
-
 
                       // Используемые функции
 
