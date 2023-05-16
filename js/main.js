@@ -1,8 +1,8 @@
 'use strict'
 
 const objRespOfServer = {};
-              // предыдущая ссылка http://f0769682.xsph.ru/   https://jscp-diplom.tw1.ru/
-fetch('https://jscp-diplom.tw1.ru/', {
+              // предыдущая ссылка http://f0769682.xsph.ru/ ,  https://jscp-diplom.tw1.ru/ , https://jscp-diplom.netoserver.ru/ 
+fetch('https://jscp-diplom.netoserver.ru/', {
     method: 'POST',
     // Добавляем необходимые заголовки
     headers: {
