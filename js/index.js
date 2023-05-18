@@ -46,18 +46,6 @@ function setTimeSeaceOnIndex(timeSeance) {
   return `<li class="movie-seances__time-block"><a class="movie-seances__time" href="hall.html">${timeSeance}</a></li>`;
 }
 
-let hallSeances = `
-<div class="movie-seances__hall">
-    <ul class="movie-seances__list">
-      <li class="movie-seances__time-block"><a class="movie-seances__time" href="hall.html">11:15</a></li>
-      <li class="movie-seances__time-block"><a class="movie-seances__time" href="hall.html">14:40</a></li>
-      <li class="movie-seances__time-block"><a class="movie-seances__time" href="hall.html">16:00</a></li>
-      <li class="movie-seances__time-block"><a class="movie-seances__time" href="hall.html">18:30</a></li>
-      <li class="movie-seances__time-block"><a class="movie-seances__time" href="hall.html">21:00</a></li>
-      <li class="movie-seances__time-block"><a class="movie-seances__time" href="hall.html">23:30</a></li>     
-    </ul>
-</div>`
-
 // получаем актуальную дату
 const dateNow = new Date();
 // устанавливаем дни недели на страницу в навигацию по дням
