@@ -1,4 +1,10 @@
 'use strict'
+// в константы помещаем путь к серверу и тело запроса
+const urlQuery = 'https://jscp-diplom.netoserver.ru/';
+const bodyQuery = 'event=update';
+// вызов функции запроса (с другой страницы) 
+createRequest(urlQuery, bodyQuery);
+
 // Восстанавливаем данные из localStorage
 //console.log('arrFilms --- ', arrFilms)
 //console.log('arrHalls --- ', arrHalls)
@@ -12,7 +18,7 @@ const arrSeances = JSON.parse(localStorage.seances);
 /* ~~~~~~~~~~~~~~ Формируем верстку карточки фильма ~~~~~~~~~~~
  возможно для каждой строки верстки стоит написать функцию*/ 
 
- // функция вставки нужной картинки в img
+   // функция вставки нужной картинки в img
  function setImgOnIndex(altImg, srcImg) {
   return `<img class="movie__poster-image" alt="${altImg}" src="${srcImg}">`;
 }
@@ -61,19 +67,24 @@ function dateMenu() {
         days[i].closest('.page-nav__day').classList.add('page-nav__day_weekend');
       }
   }
-};
+}
 // устанавливаем дни месяца (даты)на страницу в навигацию по дням
 const dateMonth = document.querySelectorAll('.page-nav__day-number');
 //console.log('Дни месяца (число) ', dateMonth);
 dateMonth.forEach((item) => {
-//const dateTemp = dateNow.setDate(dateNow.getDate() + 1);
-  dateNow.setDate(dateNow.getDate() + 1);
   item.textContent = dateNow.getDate();
+  item.closest('.page-nav__day').dataset.timeMinuteStartDay = dateNow.setHours(0,0,0,0); // запись времени в хранилище
+  console.log('timeMinuteStartDay ', dateNow.setHours(0,0,0,0)) // 
+  dateNow.setDate(dateNow.getDate() + 1);
+  console.log('dateNow ', dateNow)
+  //const dateTemp = dateNow.getDate();
+  // const dateTemp = dateNow.setDate(dateNow.getDate() + 1);
 });
 
 // Отображение (увеличение элемента) выбираемого дня
 const daysChosen = document.querySelectorAll('.page-nav__day');
 //console.log('Дни недели A', daysChosen);
+
 daysChosen.forEach((el) => {
   el.addEventListener('click', () => {
     // необходимый dataset в атрибуты
@@ -84,20 +95,22 @@ daysChosen.forEach((el) => {
           otherEl.classList.remove('page-nav__day_chosen');
       }
     })
+    // устанавливаем data-атрибут для выбранного дня с временем сеанса  
     const nowTimeStamp = new Date();
+          // получаем текущее время в минутах
     const timeMinutsNow = nowTimeStamp.getHours() * 60 + nowTimeStamp.getMinutes();
-      // получаем все data-атрибуты начала сеансов (data-start-seance)
+      // получаем все data-атрибуты начала сеансов (из data-start-seance)
     const timeStartSeances = document.querySelectorAll('.movie-seances__time');
-    console.log('timeStartSeances --- ', timeStartSeances);
+    //console.log('timeStartSeances --- ', timeStartSeances);
     if (el.getAttribute('class').includes('page-nav__day_today')) {
-      // console.log('~~~~~~ attribute Today ~~~~~~~~ = ', 'page-nav__day_today')
+        // console.log('~~~~~~ attribute Today ~~~~~~~~ = ', 'page-nav__day_today')
         timeStartSeances.forEach( (elem) => {
           const timeStartSeanceOne = Number(elem.dataset.startSeance);
-          console.log('elem.dataset.StartSeance - ', elem.dataset.startSeance)
+        /*  console.log('elem.dataset.StartSeance - ', elem.dataset.startSeance)
           console.log('timeStartSeanceOne - ', timeStartSeanceOne)
           console.log('Время сейчас в минутах: ', timeMinutsNow);
           console.log('timeMinutsNow > timeStartSeanceOne', timeMinutsNow < timeStartSeanceOne);
-
+        */
         // сравниваем текущее время и время сеанса и в зависимости от этого выводим время сеансов
         if (timeMinutsNow > timeStartSeanceOne) {
           elem.style.backgroundColor = 'grey';
@@ -105,8 +118,8 @@ daysChosen.forEach((el) => {
                           // заполняем сеансы для зала. Преобразовать для сравнения в seanceTime = seance.seance_time
                           // if (nowTimeData < seanceTime)
                           // здесь же заполняем setAtribute data-
-          console.log('Время сейчас в минутах: ', timeMinutsNow);
-          console.log('Выбор дня работает ')
+  //        console.log('Время сейчас в минутах: ', timeMinutsNow);
+    //      console.log('Выбор дня работает ')
           } 
         })      
     } else {
@@ -124,8 +137,6 @@ daysChosen.forEach((el) => {
       console.log('Значение атрибута выбранного элемента ', daysChosen[2].classList[1]);
   */  });
 });
-  
-  
 
 // Сопоставить фильмы по залам и сеансам. Вариант 2. Ипользуется метод массива в комбинации с обращениями к 
 // свойствам объектов
@@ -156,43 +167,38 @@ arrFilms.forEach( film => {
           </div>
           <div class="movie-seances__hall">`; 
 
-    let i = 0; // счетчик для коллекции "section"   
     arrHalls.forEach( hall => {
       const section = document.getElementsByTagName('section');
-      const arrSeancesFilm = arrSeances.filter( seance => film.film_id === seance.seance_filmid && hall.hall_id === seance.seance_hallid);
+      const arrSeancesFilm = arrSeances.filter( seance => 
+        film.film_id === seance.seance_filmid && hall.hall_id === seance.seance_hallid);
+        console.log('arrSeancesFilm ', arrSeancesFilm);
         if (arrSeancesFilm.length) {
               // hall_name вставляем информацию о зале здесь
             let hallStr = ` ${setHallOnIndex(hall.hall_name)}
                           <ul class="movie-seances__list">`;
             let seanceStr = '';
           // функция формирования строки для вывода времени сеанса в зале
-            function seanseTimeStr(timeOneSeance, timeStartSeans) {
+          // и запись в data-атрибуты данных для сеанса
+            function seanseTimeStr(timeOneSeance, timeStartSeance, idSeance) {
               return `<li class="movie-seances__time-block">
-                <a class="movie-seances__time" data-start-seance='${timeStartSeans}' 
-                    href="hall.html">${timeOneSeance}
+                <a class="movie-seances__time" 
+                  href="hall.html" 
+                  data-film-name='${film.film_name}'
+                  data-film-film-id='${film.film_id}'
+                  data-hall-name='${hall.hall_name}'
+                  data-hall-id='${hall.hall_id}'
+                  data-seance-id='${idSeance}'  
+                  data-start-seance='${timeStartSeance}'
+                  data-price-standart='${hall.hall_price_standart}' 
+                  data-price-vip='${hall.hall_price_vip}' 
+                  >${timeOneSeance}
                 </a>
               </li>`;
             }
-        /*// функция формирования строки для вывода 'прошедшего' времени сеанса в зале
-            function seanseTimeOldStr(timeOld) {
-              return `<li class="movie-seances__time-block">
-              <a class="movie-seances__time"  
-                  href="#0"
-                  style = "background-color: #c0bcbc;">${timeOld}
-              </a>
-            </li>`;
-            }
-        */
-
-            // Получаем содержимое из атрибутов page-nav__day_today И page-nav__day_chosen      
-      /*     const aToday = document.querySelector('.page-nav__day_today');
-            console.log('aToday.getAttribute()', aToday.getAttribute('class'))
-            console.log('aToday - ', aToday)
-       */     arrSeancesFilm.forEach(seanceFilm => {
+            arrSeancesFilm.forEach(seanceFilm => {
          // формируем строку с временем фильма на страницу,
          // устанавливаем data-атрибут начала сеанса в тег сеанса
-              seanceStr += seanseTimeStr(seanceFilm.seance_time, seanceFilm.seance_start);
-
+              seanceStr += seanseTimeStr(seanceFilm.seance_time, seanceFilm.seance_start, seanceFilm.seance_id);
             });
             // собираем строку о фильме в одну строку
             cardFilm += hallStr + seanceStr;
@@ -200,7 +206,17 @@ arrFilms.forEach( film => {
     })          // выводим карточку фильма на страницу
     main[0].insertAdjacentHTML("beforeend", cardFilm);
 })
+// обработчик клика выбранного сеанса с записью в localStorage
+const liSeance = document.querySelectorAll('.movie-seances__time');
+console.log('liSeance ', liSeance);
 
-// Теперь в массиве arrCardsFilms - лежат фильмы по "фильму", "залу" с этим фильмом и "сеансами" по этому залу с фильмом
-// console.log('****** Массив фильмов ****** ', arrCardsFilms);
-
+liSeance.forEach( (liElem) => {
+  liElem.addEventListener('click', () => {
+    // необходимый dataset в атрибуты
+    const  dataSelectSeance =  liElem.dataset;
+    localStorage.selectSeance = JSON.stringify(dataSelectSeance);
+    localStorage.chosenedDay = JSON.stringify(document.querySelector('.page-nav__day_chosen').dataset);
+    console.log('dataSelectSeance 88888 ', dataSelectSeance)
+    console.log('localStorage.selectSeance 88888 ', localStorage.selectSeance)
+  })
+})
