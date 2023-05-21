@@ -47,22 +47,74 @@ document.querySelector('.price-standart').innerText = dataSelSeance.priceStandar
         // цена vip
 document.querySelector('.price-vip').innerText = dataSelSeance.priceVip;
 
-// вешаем обработчик на выбор мест
-//...
-
-
-
 // получаем разметку зала
 hallConfig = hallCfg || arrHalls;
 console.log('hallConfig ', hallConfig );
 
-// момещаем, что пришло по занятости зала
+// помещаем, что пришло по занятости зала
 places = '';
 hallConfig.filter(elHall => {
   if (elHall.hall_id === queryHallId) {
     places = elHall.hall_config;
-    return;
   }
  });
 //console.log('///places ###### ', places);
 document.querySelector('.conf-step__wrapper').innerHTML = places;
+
+                // вешаем обработчик на выбор мест
+chairs = document.querySelectorAll('.conf-step__chair');
+//chairStandart = document.querySelectorAll('.conf-step__chair_standart');
+//chairVip = document.querySelectorAll('.conf-step__chair_vip');
+//chairDisabled = document.querySelectorAll('.conf-step__chair_disabled')
+                // отмечаем выбранные пользователем места
+chairs.forEach(itemCh => {
+  itemCh.addEventListener('click', () => {
+    if (!itemCh.getAttribute('class').includes('conf-step__chair_disabled')) {
+       itemCh.classList.toggle('conf-step__chair_selected');
+    }
+  })        
+});
+    // функция подсчета цены билетов 
+function costTickets() {
+  chairSelected = document.querySelectorAll('.conf-step__chair_selected');
+  tempCountStd = 0;
+  tempCountVip = 0;
+  chairSelected.forEach(itemChSel => {
+    if (itemChSel.getAttribute('class').includes('conf-step__chair_standart')) {
+      ++tempCountStd;
+    } 
+    if (itemChSel.getAttribute('class').includes('conf-step__chair_vip')) {
+      ++tempCountVip;
+    } 
+  });
+  return {costStd: tempCountStd * dataSelSeance.priceStandart,
+          costVip: tempCountVip * dataSelSeance.priceVip
+          };
+}
+      // функция формирования выбранных мест
+function getSelectedPlaces() {
+  arrSelPlaces = [];
+  Array.from(document.getElementsByClassName('conf-step__row')).forEach((row, rdx) => {
+    Array.from(row.childNodes).forEach((col, vdx) => {  
+      if (col.getAttribute('class').includes('conf-step__chair_selected')) {
+      //console.log('~~~~~~~~~~~~', 'РЯД ', rdx + 1, '/', 'МЕСТО ', vdx + 1)
+      arrSelPlaces.push([{'row': rdx + 1}, {'place': vdx + 1}]);
+      }
+    })
+  })
+  console.log(arrSelPlaces);
+  return arrSelPlaces;
+}
+    // обрабатывае нажатие на кнопку "ЗАБРОНИРОВАТЬ"
+document.querySelector('.acceptin-button').addEventListener('click', () => {
+        // считаем общую стоимость билетов
+    costTicket = costTickets();
+    newHallconfig = document.querySelector('.conf-step__wrapper').innerHTML
+    //console.log('costTicket ', costTicket )
+    localStorage.allCostTicket = JSON.stringify(costTicket.costStd + costTicket.costVip);
+    localStorage.selectedPlaces = JSON.stringify(getSelectedPlaces());
+    localStorage.hallNewCfg = JSON.stringify(newHallconfig);
+    console.log('newHallconfig ', newHallconfig)
+        // перход на страницу бронирования и запуска генерации QR-кода купленного(ых) билета(ов)
+    window.location.href = 'payment.html'
+})
