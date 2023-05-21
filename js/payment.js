@@ -32,6 +32,38 @@ document.querySelector('.ticket__hall').innerText = dataSelSeance.hallName[3];
 document.querySelector('.ticket__start').innerText = ` ${timeStartSeance} - ${dateStr}г.`;
 document.querySelector('.ticket__cost').innerText = priceTikets;
 
+    //формируется стрка для QR-кода
+function getStrDataForQR() {
+  const dataForQR = Array.from(document.getElementsByClassName('ticket__details'));
+  let strQR = '';
+  const textTicket = ['Фильм',
+                      'Ряд/Место',
+                      'Зал',
+                      `Время и дата 
+        начала сеанса`,
+                      'Цена'
+                    ];
+  dataForQR.forEach((item, idx) => {
+    console.log(item, idx)
+    strQR += `
+        ${textTicket[idx]}: ${item.textContent}`;        
+  })
+    return `${strQR}
+
+                  ВНИМАНИЕ!
+               БИЛЕТ СТРОГО НА
+           УКАЗАННУЮ ДАТУ и ВРЕМЯ!`;
+}
+ /*   
+    {textTicket[idx]}: {item.textContent} 
+    {textTicket[idx]}: {item.textContent} 
+    {textTicket[idx]}: {item.textContent}
+    {textTicket[idx]}: {item.textContent}
+  */          
+console.log('dataForQR ', Array.from(document.getElementsByClassName('ticket__details')));
+console.log('**** strQR *****', getStrDataForQR());
+
+
 //данные по обновленной конфигурации зала
 const arrHalls = JSON.parse(localStorage.hallNewCfg); 
 //querySeanceId = dataSelSeance.seanceId;
