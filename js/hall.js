@@ -98,7 +98,7 @@ function getSelectedPlaces() {
     Array.from(row.childNodes).forEach((col, vdx) => {  
       if (col.getAttribute('class').includes('conf-step__chair_selected')) {
       //console.log('~~~~~~~~~~~~', 'РЯД ', rdx + 1, '/', 'МЕСТО ', vdx + 1)
-      arrSelPlaces.push([{'row': rdx + 1}, {'place': vdx + 1}]);
+      arrSelPlaces.push({'row': rdx + 1, 'place': vdx + 1});
       }
     })
   })
@@ -114,7 +114,7 @@ document.querySelector('.acceptin-button').addEventListener('click', () => {
     localStorage.allCostTicket = JSON.stringify(costTicket.costStd + costTicket.costVip);
     localStorage.selectedPlaces = JSON.stringify(getSelectedPlaces());
     localStorage.hallNewCfg = JSON.stringify(newHallconfig);
-    console.log('newHallconfig ', newHallconfig)
+    //console.log('newHallconfig ', newHallconfig)
         // перход на страницу бронирования и запуска генерации QR-кода купленного(ых) билета(ов)
     window.location.href = 'payment.html'
 })
