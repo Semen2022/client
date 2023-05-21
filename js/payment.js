@@ -65,7 +65,7 @@ console.log('**** strQR *****', getStrDataForQR());
 
 
 //данные по обновленной конфигурации зала
-const arrHalls = JSON.parse(localStorage.hallNewCfg); 
+//const arrHalls = JSON.parse(localStorage.hallNewCfg); 
 //querySeanceId = dataSelSeance.seanceId;
 
 // данные для запроса конкретного сеанса
