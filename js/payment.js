@@ -1,11 +1,13 @@
 'use strict'
-    // забираем данные о планируемых к бронированию билетах из localStorage 
-     // данные выбранного сеанса
+
+// забираем данные о планируемых к бронированию билетах из localStorage 
+    // данные выбранного сеанса
 const dataSelSeance = JSON.parse(localStorage.selectSeance); //dataSelSeance
     // стимость выбранных мест
 const priceTikets = JSON.parse(localStorage.allCostTicket);
     // данные по выбранным местам для отображения в билете 
 const rowColPlaces = JSON.parse(localStorage.selectedPlaces);
+
 function strRowColPlaces() {
   let strPlaces = '';
   rowColPlaces.forEach((elemRowCol, idx) => {
@@ -18,7 +20,7 @@ function strRowColPlaces() {
 }
     // данные по выбранной дате и началу сеанса
 const timeMinStartDay = JSON.parse(localStorage.chosenedDay);
-const timeStartDaySeconds = (Number(timeMinStartDay.timeMinuteStartDay) + Number(dataSelSeance.startSeance) * 60000);
+const timeStartDaySeconds = (Number(timeMinStartDay.timeStartDay) + Number(dataSelSeance.startSeance) * 60 * 1000);
     // вычисление начала сеанса для вывода на страницу
 const timeStartSeance = `${Math.trunc(dataSelSeance.startSeance / 60)}:${(dataSelSeance.startSeance % 60) || '00'}`;
 
@@ -32,37 +34,38 @@ document.querySelector('.ticket__hall').innerText = dataSelSeance.hallName[3];
 document.querySelector('.ticket__start').innerText = ` ${timeStartSeance} - ${dateStr}г.`;
 document.querySelector('.ticket__cost').innerText = priceTikets;
 
-    //формируется стрка для QR-кода
-function getStrDataForQR() {
-  const dataForQR = Array.from(document.getElementsByClassName('ticket__details'));
-  let strQR = '';
-  const textTicket = ['Фильм',
-                      'Ряд/Место',
-                      'Зал',
-                      `Время и дата 
-        начала сеанса`,
-                      'Цена'
-                    ];
-  dataForQR.forEach((item, idx) => {
-    console.log(item, idx)
-    strQR += `
-        ${textTicket[idx]}: ${item.textContent}`;        
-  })
-    return `${strQR}
 
-                  ВНИМАНИЕ!
-               БИЛЕТ СТРОГО НА
-           УКАЗАННУЮ ДАТУ и ВРЕМЯ!`;
+
+/*   
+{textTicket[idx]}: {item.textContent} 
+{textTicket[idx]}: {item.textContent} 
+{textTicket[idx]}: {item.textContent}
+{textTicket[idx]}: {item.textContent}
+*/          
+//console.log('dataForQR ', Array.from(document.getElementsByClassName('ticket__details')));
+//console.log('**** strQR *****', getStrDataForQR());
+let bodyQues = '';
+function getHallCfg(soldTickets) {
+  const arrTickets = soldTickets.sales.result;
+  //console.log('arrTickets ', arrTickets);
 }
- /*   
-    {textTicket[idx]}: {item.textContent} 
-    {textTicket[idx]}: {item.textContent} 
-    {textTicket[idx]}: {item.textContent}
-    {textTicket[idx]}: {item.textContent}
-  */          
-console.log('dataForQR ', Array.from(document.getElementsByClassName('ticket__details')));
-console.log('**** strQR *****', getStrDataForQR());
+document.querySelector('.acceptin-button').addEventListener('click', () => {
+  //формируется строка для QR-кода
+  const dataForQR = Array.from(document.getElementsByClassName('ticket__details')).reduce((strQR, elem) => {
+    return strQR + '|' + elem.textContent ; 
+  }, '');
+  localStorage.strToQR = JSON.stringify(dataForQR);
+  const strNewCfgHall = JSON.parse(localStorage.hallNewCfg);
+  // изменить атрибуты в строке верстки на "занятые"
+  const sendHallConfig = strNewCfgHall.split('selected').join('taken'); 
 
+bodyQues = `event=sale_add&timestamp=${timeStartDaySeconds / 1000}&hallId=${dataSelSeance.hallId}&seanceId=${dataSelSeance.seanceId}&hallConfiguration=${sendHallConfig}`;
+  // отправить "занятые" места на сервер запросом
+  console.log('bodyQues ', bodyQues)
+  //console.log('sendHallConfig ', sendHallConfig)
+  createRequest(bodyQues, getHallCfg);
+  //console.log('sendHallConfig typeof ', typeof sendHallConfig)
+})
 
 //данные по обновленной конфигурации зала
 //const arrHalls = JSON.parse(localStorage.hallNewCfg); 
