@@ -1,71 +1,29 @@
-// забираем данные о сеансе из localStorage 
-// данные выбранного сеанса
-dataSelSeance = JSON.parse(localStorage.selectSeance); //dataSelSeance
-// данные по выбранной дате
+dataSelSeance = JSON.parse(localStorage.selectSeance);
 timeMinStartDay = JSON.parse(localStorage.chosenedDay);
 arrHalls = JSON.parse(localStorage.halls); 
-// данные по конфигурации зала (по умолчанию) из первого запроса
-// штампа времени в минутах для запроса сеанса
-//timeStartDayMinutsQuery = (Number(timeMinStartDay.timeMinuteStartDay) + Number(dataSelSeance.startSeance) * 60000) / 60000;
 timeStartDayMinutsQuery = (Number(timeMinStartDay.timeStartDay) / 1000 + Number(dataSelSeance.startSeance) * 60);
-// отправляем запрос на сервер о схеме зала
-// данные для запроса конкретного сеанса
 queryHallId = dataSelSeance.hallId;
 querySeanceId = dataSelSeance.seanceId;
-//urlQueryHall = 'https://jscp-diplom.netoserver.ru/';
-
 bodyQueryHall = `event=get_hallConfig&timestamp=${timeStartDayMinutsQuery}&hallId=${queryHallId}&seanceId=${querySeanceId}`;
 
-console.log('timeStartDayMinutsQuery ', timeStartDayMinutsQuery)
-console.log('bodyQueryHall ', bodyQueryHall)
-//createRequestHall(bodyQueryHall, pageHallHtml);
 createRequest(bodyQueryHall, pageHallHtml);
 
 function pageHallHtml(respDataHall) {
-
-  // bodyQueryHall = 'event=get_hallConfig&timestamp=${28077870}&hallId=${59}&seanceId=${66}';
-  //createRequestHall(); // Кот в сапогах на 15.30 на последний день в строке
-  //      createRequestHall(bodyQueryHall, функция );
-
-  // данные по конфигурации зала от сервера
-      // hallCfg = JSON.parse(localStorage.hallConfigPls);
-      hallCfg = respDataHall;
-  /*
-  console.log('bodyQueryHall ', bodyQueryHall);
-  console.log('hallCfg ', hallCfg);
-  console.log('arrHalls ', arrHalls);
-  */console.log('dataSelSeance ', dataSelSeance);
-  /*console.log('timeMinutsStartDay ', timeMinStartDay);
-  console.log('timeMinutsStartDay ', timeMinStartDay.timeMinuteStartDay, typeof timeMinStartDay.timeMinuteStartDay);
-  console.log(queryHallId, querySeanceId, timeStartDayMinutsQuery)
-  console.log('timeMinuteStartDay ', timeMinStartDay.timeMinuteStartDay)
-  сonsole.log('dataSelSeance.startSeance ', dataSelSeance.startSeance)
-  console.log('Данные для запроса 2 ');
-  console.log('timeStartDayMinutsQuery ', timeStartDayMinutsQuery)
-  console.log('urlQueryHall ', urlQueryHall)
-  console.log('bodyQueryHall ', bodyQueryHall)
-  */
   // подписываем данные на странице зала
-          // название фильма
+  // название фильма
   document.querySelector('.buying__info-title').innerHTML = dataSelSeance.filmName;
-          // начало сеанса
+  // начало сеанса
   timeStartSeance = `${Math.trunc(dataSelSeance.startSeance / 60)}:${(dataSelSeance.startSeance % 60) || '00'}`;
   document.querySelector('.buying__info-start').innerHTML = `Начало сеанса: ${timeStartSeance}`;
-          // название зала
+  // название зала
   document.querySelector('.buying__info-hall').innerHTML = `Зал ${dataSelSeance.hallName[3]}`;
-          // цена стандарт
+  // цена стандарт
   document.querySelector('.price-standart').innerText = dataSelSeance.priceStandart;
-          // цена vip
+  // цена vip
   document.querySelector('.price-vip').innerText = dataSelSeance.priceVip;
-
   // помещаем, что пришло по занятости зала из ПЕРВОГО запроса
+  hallCfg = respDataHall;
   places = '';
-                    /* hallConfig.filter(elHall => {
-                      if (elHall.hall_id === queryHallId) {
-                        places = elHall.hall_config;
-                      }
-                    });
-                    */ 
   arrHalls.filter(elHall => {
     if (elHall.hall_id === queryHallId) {
       places = elHall.hall_config;
@@ -74,16 +32,9 @@ function pageHallHtml(respDataHall) {
 
   // получаем разметку зала
   hallConfig = hallCfg || places;
-  //console.log('hallConfig ', hallConfig );
-
-  //console.log('///places ###### ', places);
   document.querySelector('.conf-step__wrapper').innerHTML = hallConfig;
-
                   // вешаем обработчик на выбор мест
   chairs = document.querySelectorAll('.conf-step__chair');
-  //chairStandart = document.querySelectorAll('.conf-step__chair_standart');
-  //chairVip = document.querySelectorAll('.conf-step__chair_vip');
-  //chairDisabled = document.querySelectorAll('.conf-step__chair_disabled')
                   // отмечаем выбранные пользователем места
   chairs.forEach(itemCh => {
     itemCh.addEventListener('click', () => {
@@ -115,30 +66,21 @@ function pageHallHtml(respDataHall) {
     Array.from(document.getElementsByClassName('conf-step__row')).forEach((row, rdx) => {
       Array.from(row.childNodes).forEach((col, vdx) => {  
         if (col.getAttribute('class').includes('conf-step__chair_selected')) {
-        //console.log('~~~~~~~~~~~~', 'РЯД ', rdx + 1, '/', 'МЕСТО ', vdx + 1)
         arrSelPlaces.push({'row': rdx + 1, 'place': vdx + 1});
         }
       })
     })
-    //console.log(arrSelPlaces);
     return arrSelPlaces;
   }
-      // обрабатывае нажатие на кнопку "ЗАБРОНИРОВАТЬ"
+          // обрабатывае нажатие на кнопку "ЗАБРОНИРОВАТЬ"
   document.querySelector('.acceptin-button').addEventListener('click', () => {
           // считаем общую стоимость билетов
       costTicket = costTickets();
       selectedHallCfg = document.querySelector('.conf-step__wrapper').innerHTML
-      
-      //console.log('selectedHallCfg ', selectedHallCfg )
-      //console.log('sendHallConfig ', sendHallConfig )
-      // сменить атрибуты с _selected на _taken перед занисью в localStorage
-      //console.log('costTicket ', costTicket )
       localStorage.allCostTicket = JSON.stringify(costTicket.costStd + costTicket.costVip);
       localStorage.selectedPlaces = JSON.stringify(getSelectedPlaces());
       localStorage.hallNewCfg = JSON.stringify(selectedHallCfg);
-      //console.log('newHallconfig ', newHallconfig)
-    
-          // перход на страницу бронирования и запуска генерации QR-кода купленного(ых) билета(ов)
+         // перход на страницу бронирования и запуска генерации QR-кода купленного(ых) билета(ов)
       window.location.href = 'payment.html'
   })
 }

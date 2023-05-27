@@ -5,7 +5,6 @@ const strQRcode = JSON.parse(localStorage.strToQR).split('|').filter((el) => {
     return el;
   }
  } );
-console.log('strQRcode ', strQRcode);
 
 document.querySelector('.ticket__title').innerText =strQRcode[0];
 document.querySelector('.ticket__chairs').innerText = strQRcode[1];
@@ -23,7 +22,6 @@ function getStrDataForQR() {
                       'Цена (руб)'
                     ];
     strQRcode.forEach((item, idx) => {
-    //console.log(item, idx + 1)
     strQR += `
         ${textTicket[idx]}: ${item}`;        
   })
@@ -39,7 +37,6 @@ const contentQR = (qrCodeStr) => {
           : qrCodeTicket.result;
 };
 
-console.log("getStrDataForQR() ", getStrDataForQR())
 document.getElementById('qrcode').append("", contentQR(qrCodeTicket))
 
 window.addEventListener("onbeforeunload", () => {
