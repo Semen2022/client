@@ -449,14 +449,12 @@ body {
   .movie__info {
     flex-direction: column;
   }
- }
- 
- @media screen and (max-width: 320.98px) {
+
   .movie__poster {
     margin: 0 auto;
     height: 15.5rem;
   }
-
+ 
   .movie .movie__description {
     padding-left: 0;
   }
