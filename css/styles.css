@@ -445,7 +445,7 @@ body {
 
  /*~~~~~~~~~ Адптив ~~~~~~~~~ */
 
- @media screen and (max-width: 540.98px) {
+ @media screen and (max-width: 576.98px) {
   .movie__info {
     flex-direction: column;
   }
