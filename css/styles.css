@@ -450,7 +450,7 @@ body {
     flex-direction: column;
   }
 
-  .movie__poster {
+.movie .movie__poster {
     margin: 0 auto;
     height: 15.5rem;
   }
@@ -459,7 +459,12 @@ body {
     padding-left: 0;
   }
 
-  .movie__data {
+  .movie .movie__synopsis {
+    margin-top: 0;
+  }
+
+  .movie .movie__data {
+    margin-top: 0;
     text-align: end;
   }
  }
